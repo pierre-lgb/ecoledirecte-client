@@ -1,33 +1,53 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native'
+import React, { useState, useEffect } from 'react';
+import { StyleSheet } from 'react-native';
+
+import { Provider } from 'react-redux'
+import { store, persistor } from './store';
+import { PersistGate } from 'redux-persist/integration/react';
+
 import {
   useFonts,
   Poppins_400Regular,
   Poppins_500Medium,
-} from '@expo-google-fonts/poppins'
+  Poppins_600SemiBold,
+} from '@expo-google-fonts/poppins';
 
-import Drawer from './navigation/Drawer'
+import {
+  Inter_600SemiBold,
+  Inter_500Medium,
+  Inter_400Regular,
+} from '@expo-google-fonts/inter';
+
+import RootNavigation from './navigation/RootNavigation';
+import SplashScreen from './screens/auth/SplashScreen'
+
+
 
 export default function App() {
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
-    Poppins_500Medium
+    Poppins_500Medium,
+    Poppins_600SemiBold,
+    Inter_600SemiBold,
+    Inter_500Medium,
+    Inter_400Regular
   })
 
+
+  useEffect(() => {
+    console.log("------------------------")
+  }, [])
+
   if (!fontsLoaded) {
-    return (
-      <View style={styles.container}>
-        <Text>App is loading...</Text>
-      </View>
-    )
+    return <SplashScreen />
   }
 
   return (
-    <NavigationContainer>
-      <Drawer />
-    </NavigationContainer>
+    <Provider store={store}>
+      <PersistGate loading={<SplashScreen />} persistor={persistor}>
+        <RootNavigation />
+      </PersistGate>
+    </Provider>
   );
 }
 
