@@ -5,7 +5,7 @@ import { responseCodes } from "../../constants";
 
 import axios from "axios";
 
-export default (url, params = {}, body = {}, method) => {
+export default (url, params = {}, body = {}) => {
     const [data, setData] = useState();
     const [error, setError] = useState();
     const [loading, setLoading] = useState(false);
@@ -21,23 +21,15 @@ export default (url, params = {}, body = {}, method) => {
 
     useEffect(() => {
         console.log("[INFO] Fetch EcoleDirecte API :", url)
+        setError("")
         setLoading(true);
-        let request;
 
-        switch (method) {
-            // case "GET":
-            //     request = axios.get(url, params)
-            case "POST":
-            default:
-                request = axios.post(url, `data=${JSON.stringify({
-                    ...body,
-                    token
-                })}`, {
-                    params
-                })
-        }
-
-        request
+        axios.post(url, `data=${JSON.stringify({
+            ...body,
+            token
+        })}`, {
+            params
+        })
             .then(res => {
                 if (res.data.message) {
                     setError(res.data.message)
@@ -47,6 +39,8 @@ export default (url, params = {}, body = {}, method) => {
                     case responseCodes.invalidToken:
                         console.log("[INFO] Refreshing user")
                         dispatch(refreshUser())
+                            .then(() => refetch())
+                        return;
                     case responseCodes.success:
                     default:
                         break
@@ -54,6 +48,7 @@ export default (url, params = {}, body = {}, method) => {
 
                 setData(res.data)
             })
+            .catch(e => console.log(e))
             .finally(() => {
                 setLoading(false)
             })

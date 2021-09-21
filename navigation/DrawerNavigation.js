@@ -250,7 +250,7 @@ export default () => {
 
     const borderRadius = Animated.interpolateNode(progress, {
         inputRange: [0, 1],
-        outputRange: [0, moderateScale(30)]
+        outputRange: [0, moderateScale(20)]
     })
 
     const translateX = Animated.interpolateNode(progress, {
@@ -290,6 +290,15 @@ export default () => {
                         <DrawerContent navigation={navigation} state={state} />
                     )
                 }}
+            // screenOptions={{
+            //     headerStyle: {
+            //         backgroundColor: '#f4511e',
+            //     },
+            //     headerTintColor: '#fff',
+            //     headerTitleStyle: {
+            //         fontWeight: 'bold',
+            //     },
+            // }}
             >
                 <Drawer.Screen name={screens.home}>{props => (
                     <Home {...props} drawerAnimationStyle={animatedStyle} />

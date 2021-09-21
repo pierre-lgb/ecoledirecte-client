@@ -1,11 +1,13 @@
-import React from 'react'
-import { StyleSheet, View, Image, TouchableOpacity, Text } from 'react-native'
-import { icons } from '../constants'
-import { moderateScale, verticalScale } from 'react-native-size-matters'
+import React, { useState } from "react"
+import { View, StyleSheet } from "react-native"
+import { verticalScale, moderateScale } from "react-native-size-matters"
+import { icons } from "../constants"
 
 import IconButton from "./IconButton"
 
-export default function Header({ openDrawer, routeName }) {
+export default function StackHeader({ goBack }) {
+    const [goBackBtnDisabled, setGoBackBtnDisabled] = useState(false)
+
     return (
         <View style={{
             paddingTop: verticalScale(50),
@@ -20,21 +22,18 @@ export default function Header({ openDrawer, routeName }) {
             zIndex: 999
         }}>
             <IconButton
-                icon={icons.menu}
-                onPress={openDrawer}
-            />
-
-            <Text style={{
-                fontFamily: "Poppins_500Medium",
-                fontSize: moderateScale(15),
-                textAlign: "center",
-                color: "#505565",
-                marginHorizontal: moderateScale(15),
-                flex: 1
-            }}>{routeName}</Text>
-
-            <IconButton
-                icon={icons.notificationActive}
+                icon={icons.leftChevron}
+                iconStyle={{
+                    tintColor: "#B6B6B6"
+                }}
+                disabled={goBackBtnDisabled}
+                onPress={() => {
+                    setGoBackBtnDisabled(true)
+                    goBack()
+                    setTimeout(() => {
+                        setGoBackBtnDisabled(false)
+                    }, 500)
+                }}
             />
         </View >
     )

@@ -6,6 +6,7 @@ export default {
     mail: require('../assets/icons/mail.png'),
     card: require('../assets/icons/card.png'),
     file: require('../assets/icons/file.png'),
+    fileBlank: require('../assets/icons/file-blank.png'),
     settings: require('../assets/icons/settings.png'),
     logout: require('../assets/icons/power.png'),
     menu: require('../assets/icons/menu.png'),
@@ -31,4 +32,6 @@ export default {
     warning: require('../assets/icons/warning.png'),
     checkedRadio: require('../assets/icons/radio-checked.png'),
     uncheckedRadio: require('../assets/icons/radio-unchecked.png'),
+    notification: require('../assets/icons/bell.png'),
+    notificationActive: require('../assets/icons/bell-active.png'),
 }

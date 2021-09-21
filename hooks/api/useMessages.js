@@ -1,5 +1,4 @@
 import useDidMountEffect from '../useDidMountEffect';
-import { useSelector } from 'react-redux';
 import useFetchED from "./useFetchED";
 
 const useMessages = (box, idClasseur, query, yearMessages) => {
@@ -9,7 +8,7 @@ const useMessages = (box, idClasseur, query, yearMessages) => {
         "orderBy": "date",
         "order": "desc",
         "query": query,
-        "itemsPerPage": 20,
+        "itemsPerPage": 0,
         "page": 0,
         "idClasseur": idClasseur
     }, {

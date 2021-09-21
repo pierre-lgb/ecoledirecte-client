@@ -1,5 +1,5 @@
 export default {
-    home: 'Activité',
+    home: 'Profil',
     timetable: 'Emploi du temps',
     agenda: 'Agenda',
     notes: 'Notes',

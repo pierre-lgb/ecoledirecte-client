@@ -1,46 +1,28 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Animated from 'react-native-reanimated'
-import { Text, ScrollView, RefreshControl } from 'react-native'
-import { scale, moderateScale, verticalScale } from 'react-native-size-matters'
+import { View } from 'react-native'
 
 import Header from '../components/Header'
-import Footer from '../components/Footer'
 
-export default function MainLayout({ children, drawerAnimationStyle, navigation, route, onRefresh, refreshing }) {
+export default function MainLayout({ children, drawerAnimationStyle, navigation, route }) {
 
     return (
         <Animated.View
             style={[drawerAnimationStyle, {
                 flex: 1,
-                backgroundColor: '#FFFFFF'
+                backgroundColor: '#FFFFFF',
+                overflow: "hidden"
             }]}
         >
-            <ScrollView
-                style={{ paddingHorizontal: scale(30) }}
-                refreshControl={onRefresh ? (
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={onRefresh}
-                        progressViewOffset={verticalScale(20)}
-                        colors={["#1F86FF"]} // Android
-                        tintColor="#1F86FF" // IOS
-                    />
-                ) : null}
-            >
-                <Header navigation={navigation} />
-                <Text style={{
-                    fontFamily: "Poppins_600SemiBold",
-                    fontSize: moderateScale(30),
-                    marginBottom: verticalScale(50),
-                    color: "#495564"
-                }}>
-                    {route.name}
-                </Text>
+            <Header
+                openDrawer={navigation.openDrawer}
+                routeName={route.name}
+            />
 
+            <View style={{ flex: 1 }}>
                 {children}
+            </View>
 
-                <Footer />
-            </ScrollView>
         </Animated.View>
     )
 }

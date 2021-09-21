@@ -61,7 +61,7 @@ export const refreshUser = () => async (dispatch) => {
     const password = await SecureStore.getItemAsync("pswd")
     const username = await SecureStore.getItemAsync("user")
 
-    dispatch(login(username, password))
+    return dispatch(login(username, password))
 }
 
 export const logout = () => (dispatch) => {

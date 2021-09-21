@@ -25,8 +25,8 @@ export const BottomModalOption = ({ icon, label, selected, onPress, style, close
     return (
         <TouchableOpacity
             onPress={() => {
-                onPress()
                 closeModal()
+                onPress()
             }}
             style={[styles.modalItem, style]}
         >
@@ -47,12 +47,43 @@ export const BottomModalOption = ({ icon, label, selected, onPress, style, close
     )
 }
 
+export const BottomModalChoice = ({ label, selected, onPress, closeModal, style }) => {
+    return (
+        <TouchableOpacity
+            onPress={() => {
+                closeModal && closeModal()
+                onPress()
+            }}
+            style={[{
+                flex: 1,
+                backgroundColor: selected ? "#E9F2FF" : "#F9F9F9",
+                alignItems: "center",
+                justifyContent: "center",
+                paddingVertical: verticalScale(10),
+                paddingHorizontal: moderateScale(20),
+                borderRadius: moderateScale(30),
+                marginHorizontal: moderateScale(10)
+            }, style]}
+        >
+            <Text
+                style={[{
+                    fontFamily: "Poppins_500Medium",
+                    fontSize: moderateScale(12),
+                    color: selected ? "#1F86FF" : "#6E7079"
+                }]}
+            >
+                {label}
+            </Text>
+        </TouchableOpacity>
+    )
+}
+
 export const BottomModalRadio = ({ label, selected, onPress, style, closeModal }) => {
     return (
         <TouchableOpacity
             onPress={() => {
-                onPress()
                 closeModal()
+                onPress()
             }}
             style={[styles.modalItem, style]}
         >
@@ -110,7 +141,7 @@ export const BottomModal = ({ visible, setVisible, title, children }) => {
     useEffect(() => {
         if (visible === true) {
             Animated.spring(slideAnimation, {
-                toValue: moderateScale(-50),
+                toValue: moderateScale(10),
                 useNativeDriver: true
             }).start();
             Animated.spring(fadeAnimation, {
@@ -177,10 +208,11 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     modalContainer: {
-        width: "80%",
+        width: "100%",
         backgroundColor: "#FFFFFF",
         padding: moderateScale(20),
-        borderRadius: moderateScale(15),
+        borderTopRightRadius: moderateScale(30),
+        borderTopLeftRadius: moderateScale(30),
         maxHeight: "70%"
     },
     modalTitleText: {
@@ -195,7 +227,7 @@ const styles = StyleSheet.create({
     modalItem: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: verticalScale(15)
+        marginVertical: verticalScale(7.5)
     },
     modalItemIcon: {
         width: moderateScale(22),
