@@ -1,11 +1,12 @@
 import React from 'react'
 import Animated from 'react-native-reanimated'
-import { View } from 'react-native'
+import { useIsDrawerOpen } from '@react-navigation/drawer'
+import { View, StatusBar } from 'react-native'
 
 import Header from '../components/Header'
 
 export default function MainLayout({ children, drawerAnimationStyle, navigation, route }) {
-
+    const drawerOpened = useIsDrawerOpen()
     return (
         <Animated.View
             style={[drawerAnimationStyle, {
@@ -14,6 +15,12 @@ export default function MainLayout({ children, drawerAnimationStyle, navigation,
                 overflow: "hidden"
             }]}
         >
+            <StatusBar
+                backgroundColor="transparent"
+                barStyle={drawerOpened ? "light-content" : "dark-content"}
+                showHideTransition={true}
+                translucent={true}
+            />
             <Header
                 openDrawer={navigation.openDrawer}
                 routeName={route.name}

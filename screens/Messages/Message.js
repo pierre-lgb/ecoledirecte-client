@@ -1,16 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
     View, Text, ScrollView,
-    Image, TouchableOpacity
+    Image, TouchableOpacity, Platform
 } from 'react-native'
-import NativeBlobModule from 'react-native/Libraries/Blob/NativeBlobModule';
-import { moderateScale, verticalScale } from 'react-native-size-matters'
+import RNFetchBlob from 'rn-fetch-blob'
+import * as RNFS from "react-native-fs"
+import * as mime from 'react-native-mime-types';
 import { useWindowDimensions } from 'react-native'
-import RenderHtml from 'react-native-render-html'
-import * as FileSystem from "expo-file-system"
-import * as MediaLibrary from 'expo-media-library';
-import axios from "axios"
+import { moderateScale, verticalScale } from 'react-native-size-matters'
 
+import * as Progress from 'react-native-progress'
+import RenderHtml from 'react-native-render-html'
 import StackHeader from '../../components/StackHeader'
 import useMessageContent from '../../hooks/api/useMessageContent'
 
@@ -35,6 +35,57 @@ const renderHtmlConfig = {
     },
     ignoredStyles: ["fontSize"],
     systemFonts: ["Inter_400Regular"]
+}
+
+const useDownloadFileFromED = (token) => {
+    const [downloadProgress, setDownloadProgress] = useState(1)
+
+    const downloadFile = async (file, yearMessages, fileType) => {
+        const { DownloadDir, DocumentDir } = RNFetchBlob.fs.dirs
+        const directoryPath = Platform.select({
+            ios: DocumentDir,
+            android: DownloadDir,
+        });
+        const filename = file.libelle.replace(/\.[^/.]+$/, "")
+        const fileExt = file.libelle.split(".").pop()
+        const filePath = `${directoryPath}/${filename}`;
+
+        const configOptions = Platform.select({
+            ios: {
+                fileCache: true,
+                path: filePath,
+                appendExt: fileExt,
+                notification: true,
+            },
+            android: {
+                fileCache: true,
+                appendExt: fileExt
+            }
+        });
+
+        setDownloadProgress(0)
+        RNFetchBlob
+            .config(configOptions)
+            .fetch("POST",
+                "https://api.ecoledirecte.com/v3/telechargement.awp?verbe=get",
+                { "Content-Type": "application/x-www-form-urlencoded" },
+                `leTypeDeFichier=${fileType}&fichierId=${file.id}&token=${token}&anneeMessages=${yearMessages || ""}`
+            )
+            .progress((loaded, total) => { setDownloadProgress(loaded / total) })
+            .then(async (res) => {
+                setDownloadProgress(1)
+                if (Platform.OS === "android") {
+                    RNFetchBlob.android.actionViewIntent(res.path(), mime.lookup(fileExt));
+                }
+
+                if (Platform.OS === "ios") {
+                    RNFetchBlob.ios.openDocument(res.path())
+                }
+            })
+            .catch(e => console.log(e))
+    }
+
+    return { downloadFile, downloadProgress }
 }
 
 const MessageHeader = ({ message }) => {
@@ -114,14 +165,39 @@ const MessageHeader = ({ message }) => {
 
 const FileIcon = ({ file }) => {
     let color;
-    // const fileExtension = file.libelle.split(".").pop()
-    const fileExtension = "pdf"
+    const fileExtension = file.libelle.split(".").pop()
     switch (fileExtension) {
         case "pdf":
-            color = "#D47373"
+        case "ppt":
+        case "pptx":
+        case "odf":
+            color = "rgb(212, 115, 115)";
+            break;
+        case "html":
+        case "xml":
+        case "odt":
+        case "doc":
+        case "docx":
+            color = "rgb(62, 116, 218)";
+            break;
+        case "png":
+        case "mp4":
+        case "jpg":
+        case "jpeg":
+            color = "rgb(246, 118, 166)"
+            break;
+        case "ods":
+        case "xls":
+        case "xlsx":
+            color = "rgb(63, 158, 100)"
+            break;
+        case "txt":
+        case "zip":
+            color = "rgb(79, 86, 111)"
             break;
         default:
-            color = "#B6B6B6"
+            color = "#B6B6B6";
+            break;
     }
 
     return (
@@ -153,21 +229,60 @@ const FileIcon = ({ file }) => {
     )
 }
 
-const saveFile = async (fileUri) => {
-    console.log(fileUri)
-    // await Sharing.shareAsync(fileUri);
-    const { status } = await MediaLibrary.requestPermissionsAsync()
-    if (status === "granted") {
-        console.log("Permissions granted")
-        const asset = await MediaLibrary.createAssetAsync(fileUri);
-        console.log("ASSET:", asset)
-        const album = await MediaLibrary.getAlbumAsync('EDClient');
-        if (album == null) {
-            await MediaLibrary.createAlbumAsync('EDClient', asset, false).catch(e => console.log(e));
-        } else {
-            await MediaLibrary.addAssetsToAlbumAsync([asset], album, false).catch(e => console.log(e));
-        }
-    }
+const FileItem = ({ file, onPress }) => {
+    return (
+        <View
+            style={{
+                borderColor: "#E6E9EB",
+                borderWidth: moderateScale(1),
+                borderRadius: moderateScale(7),
+                paddingVertical: verticalScale(10),
+                paddingHorizontal: moderateScale(20),
+                marginVertical: verticalScale(5),
+                flexDirection: "row"
+            }}
+        >
+            <View>
+                <FileIcon file={file} />
+            </View>
+            <View style={{
+                flex: 1,
+                paddingHorizontal: moderateScale(15),
+                justifyContent: "center"
+            }}>
+                <Text
+                    numberOfLines={1}
+                    style={{
+                        fontFamily: "Inter_600SemiBold",
+                        fontSize: moderateScale(12),
+                        color: "#6E7079",
+                    }}
+                >{file.libelle}</Text>
+                <Text style={{
+                    fontFamily: "Inter_400Regular",
+                    fontSize: moderateScale(9),
+                    color: "#CFCFCF"
+                }}>Ajouté le {dayjs(file.date).format('D MMM YYYY')}</Text>
+            </View>
+            <TouchableOpacity
+                style={{
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}
+                onPress={onPress}
+            >
+                <Image
+                    source={icons.download}
+                    style={{
+                        tintColor: "#1F86FF",
+                        width: moderateScale(20),
+                        height: moderateScale(20)
+                    }}
+                />
+            </TouchableOpacity>
+
+        </View>
+    )
 }
 
 export default function Message({ route, navigation }) {
@@ -177,32 +292,7 @@ export default function Message({ route, navigation }) {
 
     const { token } = useSelector(state => state.auth)
 
-    React.useEffect(() => {
-        try {
-            axios.post(
-                "https://api.ecoledirecte.com/v3/telechargement.awp?verbe=post&&annee-messages=2021-2022&fichierId=901&leTypeDeFichier=PIECE_JOINTE",
-                `data={ "token": "${token}"}`,
-                {
-                    headers: {
-                        "referer": "https://www.ecoledirecte.com/"
-                    },
-                    responseType: "blob"
-                }
-            )
-                .then(async (response) => {
-                    const fr = new FileReader();
-                    fr.onload = async (e) => {
-                        const fileUri = `${FileSystem.documentDirectory}my-great-document.pdf`;
-                        const result = await FileSystem.writeAsStringAsync(fileUri, fr.result.split(',')[1], { encoding: FileSystem.EncodingType.Base64 });
-                        saveFile(fileUri);
-                    }
-                    fr.readAsDataURL(response.data);
-                })
-                .catch(e => console.log(e))
-        } catch (e) {
-            console.log(e)
-        }
-    }, [])
+    const { downloadFile, downloadProgress } = useDownloadFileFromED(token)
 
     return (
         <View style={{
@@ -239,7 +329,13 @@ export default function Message({ route, navigation }) {
                             source={{ html: messageContent }}
                             {...renderHtmlConfig}
                         />
-                    ) : <Text>Chargement...</Text>}
+                    ) : (
+                        <View style={{ alignItems: "center", justifyContent: "center" }}>
+                            <Progress.CircleSnail color="#1F86FF" size={30} indeterminate={true} />
+                        </View>
+
+                        // <Text>Chargement...</Text>
+                    )}
 
 
                     {message.files.length > 0 && (
@@ -263,61 +359,31 @@ export default function Message({ route, navigation }) {
                                 }}></View>
                             </View>
                             {message.files.map((file, key) => (
-                                <View
+                                <FileItem
                                     key={key}
-                                    style={{
-                                        borderColor: "#E6E9EB",
-                                        borderWidth: moderateScale(1),
-                                        borderRadius: moderateScale(7),
-                                        paddingVertical: verticalScale(10),
-                                        paddingHorizontal: moderateScale(20),
-                                        marginVertical: verticalScale(5),
-                                        flexDirection: "row"
-                                    }}
-                                >
-                                    <View>
-                                        <FileIcon file={file} />
-                                    </View>
-                                    <View style={{
-                                        flex: 1,
-                                        paddingHorizontal: moderateScale(10),
-                                        justifyContent: "center"
-                                    }}>
-                                        <Text
-                                            numberOfLines={1}
-                                            style={{
-                                                fontFamily: "Inter_600SemiBold",
-                                                fontSize: moderateScale(13),
-                                                color: "#6E7079",
-                                            }}
-                                        >{file.libelle}</Text>
-                                        <Text style={{
-                                            fontFamily: "Inter_400Regular",
-                                            fontSize: moderateScale(10),
-                                            color: "#CFCFCF"
-                                        }}>Ajouté le {dayjs(message.date).format('D MMM YYYY')}</Text>
-                                    </View>
-                                    <TouchableOpacity style={{
-                                        alignItems: "center",
-                                        justifyContent: "center"
-                                    }}>
-                                        <Image
-                                            source={icons.download}
-                                            style={{
-                                                tintColor: "#1F86FF",
-                                                width: moderateScale(20),
-                                                height: moderateScale(20)
-                                            }}
-                                        />
-                                    </TouchableOpacity>
-
-                                </View>
+                                    file={file}
+                                    onPress={() => downloadFile(file, yearMessages, "PIECE_JOINTE")}
+                                />
                             ))}
                         </View>
                     )}
 
                 </View>
             </ScrollView>
+            {downloadProgress !== 1 && (
+                <View style={{
+                    height: verticalScale(8)
+                }}>
+                    <Progress.Bar
+                        height={verticalScale(6)}
+                        width={null}
+                        borderRadius={0}
+                        color="#1F86FF"
+                        borderColor="transparent"
+                        progress={downloadProgress}
+                    />
+                </View>
+            )}
             <View style={{
                 height: 75,
                 borderTopColor: "#F9F9F9",
