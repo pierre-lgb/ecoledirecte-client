@@ -1,18 +1,17 @@
-import React, { useState } from 'react'
+import React from "react"
 import {
     View, Text, ScrollView,
-    Image, TouchableOpacity, Platform
+    Image, TouchableOpacity
 } from 'react-native'
-import RNFetchBlob from 'rn-fetch-blob'
-import * as RNFS from "react-native-fs"
-import * as mime from 'react-native-mime-types';
+
 import { useWindowDimensions } from 'react-native'
 import { moderateScale, verticalScale } from 'react-native-size-matters'
 
 import * as Progress from 'react-native-progress'
-import RenderHtml from 'react-native-render-html'
+import RenderHtml, { HTMLElementModel, HTMLContentModel } from 'react-native-render-html'
 import StackHeader from '../../components/StackHeader'
 import useMessageContent from '../../hooks/api/useMessageContent'
+import useDownloadFileFromED from '../../hooks/api/useDownloadFileFromED'
 
 import dayjs from 'dayjs';
 import { icons } from '../../constants'
@@ -34,58 +33,19 @@ const renderHtmlConfig = {
         }
     },
     ignoredStyles: ["fontSize"],
-    systemFonts: ["Inter_400Regular"]
-}
-
-const useDownloadFileFromED = (token) => {
-    const [downloadProgress, setDownloadProgress] = useState(1)
-
-    const downloadFile = async (file, yearMessages, fileType) => {
-        const { DownloadDir, DocumentDir } = RNFetchBlob.fs.dirs
-        const directoryPath = Platform.select({
-            ios: DocumentDir,
-            android: DownloadDir,
-        });
-        const filename = file.libelle.replace(/\.[^/.]+$/, "")
-        const fileExt = file.libelle.split(".").pop()
-        const filePath = `${directoryPath}/${filename}`;
-
-        const configOptions = Platform.select({
-            ios: {
-                fileCache: true,
-                path: filePath,
-                appendExt: fileExt,
-                notification: true,
-            },
-            android: {
-                fileCache: true,
-                appendExt: fileExt
-            }
-        });
-
-        setDownloadProgress(0)
-        RNFetchBlob
-            .config(configOptions)
-            .fetch("POST",
-                "https://api.ecoledirecte.com/v3/telechargement.awp?verbe=get",
-                { "Content-Type": "application/x-www-form-urlencoded" },
-                `leTypeDeFichier=${fileType}&fichierId=${file.id}&token=${token}&anneeMessages=${yearMessages || ""}`
-            )
-            .progress((loaded, total) => { setDownloadProgress(loaded / total) })
-            .then(async (res) => {
-                setDownloadProgress(1)
-                if (Platform.OS === "android") {
-                    RNFetchBlob.android.actionViewIntent(res.path(), mime.lookup(fileExt));
-                }
-
-                if (Platform.OS === "ios") {
-                    RNFetchBlob.ios.openDocument(res.path())
-                }
-            })
-            .catch(e => console.log(e))
+    systemFonts: ["Inter_400Regular"],
+    baseStyle: {
+        fontFamily: "Inter_400Regular",
+        color: "#999999",
+        fontSize: moderateScale(12),
+        marginVertical: verticalScale(5)
+    },
+    customHTMLElementModels: {
+        'font': HTMLElementModel.fromCustomModel({
+            tagName: 'font',
+            contentModel: HTMLContentModel.block
+        })
     }
-
-    return { downloadFile, downloadProgress }
 }
 
 const MessageHeader = ({ message }) => {
@@ -212,7 +172,7 @@ const FileIcon = ({ file }) => {
             />
             <View style={{
                 backgroundColor: "#FFFFFF",
-                paddingHorizontal: moderateScale(2),
+                paddingHorizontal: moderateScale(3),
                 position: "absolute",
                 left: moderateScale(10),
                 bottom: moderateScale(5)
@@ -229,7 +189,7 @@ const FileIcon = ({ file }) => {
     )
 }
 
-const FileItem = ({ file, onPress }) => {
+const FileItem = ({ file, onPress, downloadingFile }) => {
     return (
         <View
             style={{
@@ -270,6 +230,7 @@ const FileItem = ({ file, onPress }) => {
                     justifyContent: "center"
                 }}
                 onPress={onPress}
+                disabled={downloadingFile}
             >
                 <Image
                     source={icons.download}
@@ -289,6 +250,7 @@ export default function Message({ route, navigation }) {
     const { message, yearMessages } = route.params
     const { messageContent, error, loading } = useMessageContent(message, yearMessages)
     const { width } = useWindowDimensions()
+    // console.log(messageContent)
 
     const { token } = useSelector(state => state.auth)
 
@@ -323,18 +285,17 @@ export default function Message({ route, navigation }) {
                         {message.subject}
                     </Text>
 
-                    {messageContent ? (
+                    {loading ? (
+                        <View style={{ alignItems: "center", justifyContent: "center" }}>
+                            <Progress.CircleSnail color="#1F86FF" size={30} indeterminate={true} />
+                        </View>
+
+                    ) : (
                         <RenderHtml
                             contentWidth={width}
                             source={{ html: messageContent }}
                             {...renderHtmlConfig}
                         />
-                    ) : (
-                        <View style={{ alignItems: "center", justifyContent: "center" }}>
-                            <Progress.CircleSnail color="#1F86FF" size={30} indeterminate={true} />
-                        </View>
-
-                        // <Text>Chargement...</Text>
                     )}
 
 
@@ -363,6 +324,7 @@ export default function Message({ route, navigation }) {
                                     key={key}
                                     file={file}
                                     onPress={() => downloadFile(file, yearMessages, "PIECE_JOINTE")}
+                                    downloadingFile={downloadProgress !== 1}
                                 />
                             ))}
                         </View>

@@ -1,5 +1,7 @@
-import base64Decode from "./base64Decode";
+import base64UTF8Decode from "./base64UTF8Decode";
+import generateUniqueId from "./generateUniqueId";
 
 export {
-    base64Decode
+    base64UTF8Decode,
+    generateUniqueId
 }

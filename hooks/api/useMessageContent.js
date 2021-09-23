@@ -1,5 +1,5 @@
 import useFetchED from "./useFetchED";
-import base64UTF8Decode from "../../utils/base64UTF8Decode";
+import { base64UTF8Decode } from "../../utils";
 
 const useMessageContent = (message, yearMessages) => {
     const { data, error, loading } = useFetchED(`https://api.ecoledirecte.com/v3/eleves/5241/messages/${message.id}.awp`, {

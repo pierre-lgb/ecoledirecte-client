@@ -162,9 +162,9 @@ export default function Messages(props) {
 //                     flex: 1,
 //                     textAlignVertical: "center"
 //                 }}
-//                 onSubmitEditing={(value) => {
-//                     setQuery(value.nativeEvent.text)
-//                 }}
+                // onSubmitEditing={(value) => {
+                //     setQuery(value.nativeEvent.text)
+                // }}
 //             />
 //         </View>
 //     )

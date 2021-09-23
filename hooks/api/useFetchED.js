@@ -20,15 +20,17 @@ export default (url, params = {}, body = {}) => {
     }
 
     useEffect(() => {
+        const source = axios.CancelToken.source()
         console.log("[INFO] Fetch EcoleDirecte API :", url)
-        setError("")
         setLoading(true);
+        setError("")
 
         axios.post(url, `data=${JSON.stringify({
             ...body,
             token
         })}`, {
-            params
+            params,
+            cancelToken: source.token
         })
             .then(res => {
                 if (res.data.message) {
@@ -48,10 +50,20 @@ export default (url, params = {}, body = {}) => {
 
                 setData(res.data)
             })
-            .catch(e => console.log(e))
+            .catch(error => {
+                if (axios.isCancel(error)) {
+                    console.log('Request canceled', error.message);
+                } else {
+                    console.log(error)
+                }
+            })
             .finally(() => {
                 setLoading(false)
             })
+
+        return () => {
+            source.cancel("Fetch cancelled.")
+        }
     }, [url, refetchIndex]);
 
     return { data, error, loading, refetch };

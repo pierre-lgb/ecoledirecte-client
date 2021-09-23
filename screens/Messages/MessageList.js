@@ -13,14 +13,14 @@ import {
 import MainLayout from "../MainLayout";
 import useMessages from '../../hooks/api/useMessages';
 import { useSelector } from "react-redux";
-import { verticalScale, moderateScale, scale } from "react-native-size-matters";
 
+import { verticalScale, moderateScale, scale } from "react-native-size-matters";
 import dayjs from 'dayjs';
 
 import { icons } from "../../constants";
 const SEARCHBAR_HEADER_HEIGHT = verticalScale(75)
 
-const SearchBarHeader = ({ flatListScrollY, setBoxModalVisible }) => {
+const SearchBarHeader = ({ flatListScrollY, setBoxModalVisible, query, setQuery }) => {
     const translateY = Animated
         .diffClamp(flatListScrollY.current, 0, SEARCHBAR_HEADER_HEIGHT)
         .interpolate({
@@ -103,6 +103,9 @@ const SearchBarHeader = ({ flatListScrollY, setBoxModalVisible }) => {
                                 fontFamily: "Inter_400Regular",
                                 fontSize: moderateScale(12)
                             }}
+                            onSubmitEditing={(value) => {
+                                setQuery(value.nativeEvent.text)
+                            }}
                         />
                     </View>
                 </View>
@@ -132,6 +135,7 @@ const BoxModal = ({ visible, setVisible, classeurs, idClasseur, setIdClasseur, b
                     selected={yearMessages === previousYear}
                     onPress={() => {
                         setYearMessages(previousYear)
+                        setIdClasseur(0) // If user was in a "classeur", send it back to main Inbox.
                     }}
                 />
                 <BottomModalChoice
@@ -139,7 +143,7 @@ const BoxModal = ({ visible, setVisible, classeurs, idClasseur, setIdClasseur, b
                     selected={yearMessages === currentYear || !yearMessages}
                     onPress={() => {
                         setYearMessages(currentYear)
-                        setIdClasseur(0) // If user was in a "classeur", send it back to main Inbox.
+                        setIdClasseur(0)
                     }}
                 />
             </View>
@@ -203,6 +207,7 @@ const BoxModal = ({ visible, setVisible, classeurs, idClasseur, setIdClasseur, b
 
 const MessageItem = memo(({ message, yearMessages, navigation }) => {
     const [disabled, setDisabled] = useState(false)
+    const [read, setRead] = useState(message.read)
 
     return (
         <TouchableOpacity
@@ -217,6 +222,7 @@ const MessageItem = memo(({ message, yearMessages, navigation }) => {
             }}
             disabled={disabled}
             onPress={() => {
+                setRead(true)
                 setDisabled(true) // Prevents opening the screen multiple times when spam clicking
                 if (!message.brouillon) {
                     navigation.navigate("Messages", {
@@ -284,7 +290,7 @@ const MessageItem = memo(({ message, yearMessages, navigation }) => {
                     alignItems: "center",
                     marginBottom: verticalScale(10)
                 }}>
-                    {!message.read && (
+                    {!read && (
                         <View style={{
                             width: moderateScale(6),
                             height: moderateScale(6),
@@ -416,8 +422,9 @@ export default function MessageList(props) {
             <SearchBarHeader
                 flatListScrollY={flatListScrollY}
                 setBoxModalVisible={setBoxModalVisible}
+                query={query}
+                setQuery={setQuery}
             />
-
         </MainLayout >
     )
 }
