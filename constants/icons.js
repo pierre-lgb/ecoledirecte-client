@@ -34,4 +34,5 @@ export default {
     uncheckedRadio: require('../assets/icons/radio-unchecked.png'),
     notification: require('../assets/icons/bell.png'),
     notificationActive: require('../assets/icons/bell-active.png'),
+    phone: require('../assets/icons/mobile.png')
 }

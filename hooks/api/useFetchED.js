@@ -20,7 +20,6 @@ export default (url, params = {}, body = {}) => {
     }
 
     useEffect(() => {
-        const source = axios.CancelToken.source()
         console.log("[INFO] Fetch EcoleDirecte API :", url)
         setLoading(true);
         setError("")
@@ -29,8 +28,7 @@ export default (url, params = {}, body = {}) => {
             ...body,
             token
         })}`, {
-            params,
-            cancelToken: source.token
+            params
         })
             .then(res => {
                 if (res.data.message) {
@@ -60,10 +58,6 @@ export default (url, params = {}, body = {}) => {
             .finally(() => {
                 setLoading(false)
             })
-
-        return () => {
-            source.cancel("Fetch cancelled.")
-        }
     }, [url, refetchIndex]);
 
     return { data, error, loading, refetch };

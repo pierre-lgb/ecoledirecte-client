@@ -161,7 +161,7 @@ const LogoutButton = ({ navigation }) => {
 
 const DrawerContent = ({ state, navigation }) => {
     const { accounts } = useSelector(state => state.auth)
-    const currentAccount = accounts[0]
+    const account = accounts[0]
 
     return (
         <DrawerContentScrollView
@@ -178,10 +178,10 @@ const DrawerContent = ({ state, navigation }) => {
             >
                 {/* Profile info */}
                 <ProfileInfo
-                    nom={currentAccount?.nom}
-                    prenom={currentAccount?.prenom}
-                    classe={currentAccount?.profile.classe.libelle}
-                    imageURI="https://doc1.ecoledirecte.com/PhotoEleves/0441936R_6955685032734a4347454d/6469664f6167.jpg"
+                    nom={account?.nom}
+                    prenom={account?.prenom}
+                    classe={account?.profile.classe.libelle}
+                    imageURI={"https:" + account?.profile.photo}
                 />
                 <DrawerDivider />
 

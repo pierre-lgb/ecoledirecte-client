@@ -1,7 +1,6 @@
 import React from "react"
 import {
-    View, Text, ScrollView,
-    Image, TouchableOpacity
+    View, Text, ScrollView
 } from 'react-native'
 
 import { useWindowDimensions } from 'react-native'
@@ -9,13 +8,13 @@ import { moderateScale, verticalScale } from 'react-native-size-matters'
 
 import * as Progress from 'react-native-progress'
 import RenderHtml, { HTMLElementModel, HTMLContentModel } from 'react-native-render-html'
+import FileItem from "../../components/FileItem"
 import StackHeader from '../../components/StackHeader'
 import useMessageContent from '../../hooks/api/useMessageContent'
 import useDownloadFileFromED from '../../hooks/api/useDownloadFileFromED'
 
-import dayjs from 'dayjs';
-import { icons } from '../../constants'
 import { useSelector } from 'react-redux'
+import DownloadProgressBar from "../../components/DownloadProgressBar"
 
 const renderHtmlConfig = {
     tagsStyles: {
@@ -123,129 +122,6 @@ const MessageHeader = ({ message }) => {
     )
 }
 
-const FileIcon = ({ file }) => {
-    let color;
-    const fileExtension = file.libelle.split(".").pop()
-    switch (fileExtension) {
-        case "pdf":
-        case "ppt":
-        case "pptx":
-        case "odf":
-            color = "rgb(212, 115, 115)";
-            break;
-        case "html":
-        case "xml":
-        case "odt":
-        case "doc":
-        case "docx":
-            color = "rgb(62, 116, 218)";
-            break;
-        case "png":
-        case "mp4":
-        case "jpg":
-        case "jpeg":
-            color = "rgb(246, 118, 166)"
-            break;
-        case "ods":
-        case "xls":
-        case "xlsx":
-            color = "rgb(63, 158, 100)"
-            break;
-        case "txt":
-        case "zip":
-            color = "rgb(79, 86, 111)"
-            break;
-        default:
-            color = "#B6B6B6";
-            break;
-    }
-
-    return (
-        <View>
-            <Image
-                source={icons.fileBlank}
-                style={{
-                    tintColor: color,
-                    width: moderateScale(40),
-                    height: moderateScale(40)
-                }}
-            />
-            <View style={{
-                backgroundColor: "#FFFFFF",
-                paddingHorizontal: moderateScale(3),
-                position: "absolute",
-                left: moderateScale(10),
-                bottom: moderateScale(5)
-            }}>
-                <Text
-                    style={{
-                        fontFamily: "Poppins_700Bold",
-                        fontSize: moderateScale(8),
-                        color
-                    }}
-                >{fileExtension.toUpperCase()}</Text>
-            </View>
-        </View>
-    )
-}
-
-const FileItem = ({ file, onPress, downloadingFile }) => {
-    return (
-        <View
-            style={{
-                borderColor: "#E6E9EB",
-                borderWidth: moderateScale(1),
-                borderRadius: moderateScale(7),
-                paddingVertical: verticalScale(10),
-                paddingHorizontal: moderateScale(20),
-                marginVertical: verticalScale(5),
-                flexDirection: "row"
-            }}
-        >
-            <View>
-                <FileIcon file={file} />
-            </View>
-            <View style={{
-                flex: 1,
-                paddingHorizontal: moderateScale(15),
-                justifyContent: "center"
-            }}>
-                <Text
-                    numberOfLines={1}
-                    style={{
-                        fontFamily: "Inter_600SemiBold",
-                        fontSize: moderateScale(12),
-                        color: "#6E7079",
-                    }}
-                >{file.libelle}</Text>
-                <Text style={{
-                    fontFamily: "Inter_400Regular",
-                    fontSize: moderateScale(9),
-                    color: "#CFCFCF"
-                }}>Ajouté le {dayjs(file.date).format('D MMM YYYY')}</Text>
-            </View>
-            <TouchableOpacity
-                style={{
-                    alignItems: "center",
-                    justifyContent: "center"
-                }}
-                onPress={onPress}
-                disabled={downloadingFile}
-            >
-                <Image
-                    source={icons.download}
-                    style={{
-                        tintColor: "#1F86FF",
-                        width: moderateScale(20),
-                        height: moderateScale(20)
-                    }}
-                />
-            </TouchableOpacity>
-
-        </View>
-    )
-}
-
 export default function Message({ route, navigation }) {
     const { message, yearMessages } = route.params
     const { messageContent, error, loading } = useMessageContent(message, yearMessages)
@@ -323,7 +199,10 @@ export default function Message({ route, navigation }) {
                                 <FileItem
                                     key={key}
                                     file={file}
-                                    onPress={() => downloadFile(file, yearMessages, "PIECE_JOINTE")}
+                                    onPress={() => downloadFile(file, {
+                                        anneeMessages: yearMessages || "",
+                                        leTypeDeFichier: "PIECE_JOINTE"
+                                    })}
                                     downloadingFile={downloadProgress !== 1}
                                 />
                             ))}
@@ -332,20 +211,7 @@ export default function Message({ route, navigation }) {
 
                 </View>
             </ScrollView>
-            {downloadProgress !== 1 && (
-                <View style={{
-                    height: verticalScale(8)
-                }}>
-                    <Progress.Bar
-                        height={verticalScale(6)}
-                        width={null}
-                        borderRadius={0}
-                        color="#1F86FF"
-                        borderColor="transparent"
-                        progress={downloadProgress}
-                    />
-                </View>
-            )}
+            <DownloadProgressBar downloadProgress={downloadProgress} />
             <View style={{
                 height: 75,
                 borderTopColor: "#F9F9F9",

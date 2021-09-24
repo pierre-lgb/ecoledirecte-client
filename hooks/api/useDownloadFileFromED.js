@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Platform } from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob'
+import Toast from 'react-native-simple-toast';
 import * as mime from 'react-native-mime-types';
 import { generateUniqueId } from '../../utils';
 
@@ -15,7 +16,7 @@ const useDownloadFileFromED = (token) => {
     const { dispatch } = useDispatch()
     const { isConnected } = useNetInfo()
 
-    const downloadFile = (file, yearMessages, fileType) => {
+    const downloadFile = (file, additionalParams) => {
         if (!isConnected) {
             alert("Vous n'êtes pas connectés à internet :/")
             return
@@ -24,30 +25,31 @@ const useDownloadFileFromED = (token) => {
         const { DownloadDir, DocumentDir } = RNFetchBlob.fs.dirs
         const directoryPath = Platform.select({
             ios: DocumentDir,
-            android: DownloadDir,
+            android: DownloadDir // Only works on Android, not on IOS
         });
-        const fileName = file.libelle.replace(/\.[^/.]+$/, "")
-            // Need to add this unique ID to prevent a bug.
-            + (Platform.OS === "android" && `-${generateUniqueId()}`)
-        const fileExt = file.libelle.split(".").pop()
-        const filePath = `${directoryPath}/${fileName}.${fileExt}`;
+
+        const params = new URLSearchParams({
+            token: token,
+            fichierId: file.id,
+            ...additionalParams
+        }).toString();
+        console.log(params);
+
 
         setDownloadProgress(0)
         RNFetchBlob
             .config({
                 fileCache: true,
-                path: filePath,
-                appendExt: fileExt,
-                notification: true
+                notification: true // IOS Notification
             })
             .fetch("POST",
                 "https://api.ecoledirecte.com/v3/telechargement.awp?verbe=get",
                 { "Content-Type": "application/x-www-form-urlencoded" },
-                `leTypeDeFichier=${fileType}&fichierId=${file.id}&token=${token}&anneeMessages=${yearMessages || ""}`
+                params
             )
             .progress((loaded, total) => { setDownloadProgress(loaded / total) })
             .then(async (res) => {
-                // Handle invalid token
+                // Handle invalid token or expired session
                 if ([
                     responseCodes.invalidToken,
                     responseCodes.sessionExpired
@@ -57,23 +59,46 @@ const useDownloadFileFromED = (token) => {
                         .then(() => downloadFile(file, yearMessages, fileType))
                 }
 
+                // Filename (+ add unique ID on Android)
+                const fileName = file.libelle.replace(/\.[^/.]+$/, "")
+                    // Need to add this unique ID to prevent a bug on Android.
+                    + (Platform.OS === "android" && `-${generateUniqueId()}`)
+
+                // Get file extension (even with "Document" tab files) and mimeType
+                const disposition = res.respInfo.headers["content-disposition"]
+                const attachmentFilename = /filename\*?=([^']*'')?([^;]*)/.exec(disposition)[2].replace(/\"/gm, "")
+                const fileExt = attachmentFilename.split(".").length > 1 ? attachmentFilename.split(".").pop() : ""
+                const mimeType = mime.lookup(fileExt)
+
+                // Combine all → path
+                const filePath = `${directoryPath}/${fileName}${fileExt ? "." + fileExt : ""}`
+
+                await RNFetchBlob.fs.writeFile(filePath, await res.base64(), "base64")
+                Toast.show("Fichier téléchargé")
+
                 if (Platform.OS === "android") {
-                    // Notification
-                    if (mime.lookup(fileExt)) {
+                    // Android Notification
+                    if (mimeType) {
                         RNFetchBlob.android.addCompleteDownload({
                             title: fileName,
                             description: 'Fichier téléchargé',
-                            mime: mime.lookup(fileExt),
+                            mime: mimeType,
                             path: filePath,
                             showNotification: true
                         })
                     }
-                    RNFetchBlob.android.actionViewIntent(res.path(), mime.lookup(fileExt));
+
+                    // Open file
+                    await RNFetchBlob.android.actionViewIntent(filePath, mimeType || "");
                 }
 
                 if (Platform.OS === "ios") {
+                    // Open file
                     RNFetchBlob.ios.openDocument(res.path())
                 }
+
+                return
+                // Handle invalid token
             })
             .catch(e => console.log(e))
             .finally(() => {

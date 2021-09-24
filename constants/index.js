@@ -5,5 +5,5 @@ import responseCodes from './responseCodes'
 export {
     icons,
     screens,
-    responseCodes
+    responseCodes,
 }
