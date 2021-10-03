@@ -43,9 +43,15 @@ const renderSectionHeader = ({ section: { title, data } }) => {
 }
 
 export default function Documents(props) {
-    const { documents, loading, error, refetchDocuments } = useDocuments()
-    const { token } = useSelector(state => state.auth)
+    const { token, accounts } = useSelector(state => state.auth)
+    const account = accounts[0]
+
     const { downloadFile, downloadProgress } = useDownloadFileFromED(token)
+    const { documents, loading, error, refetchDocuments } = useDocuments(account)
+
+    if (!account) {
+        return <MainLayout {...props}></MainLayout>
+    }
 
     return (
         <MainLayout {...props} >

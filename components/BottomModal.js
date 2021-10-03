@@ -167,7 +167,13 @@ export const BottomModal = ({ visible, setVisible, title, children }) => {
                             transform: [{ translateY: slideAnimation }],
                             opacity: fadeAnimation
                         }]}>
-                            <ScrollView>
+                            <ScrollView
+                                overScrollMode="never"
+                                style={{
+                                    paddingHorizontal: moderateScale(20),
+                                    marginTop: verticalScale(25)
+                                }}
+                            >
                                 <View style={{ padding: moderateScale(15) }}>
                                     <View
                                         style={{
@@ -190,6 +196,7 @@ export const BottomModal = ({ visible, setVisible, title, children }) => {
                                         })}
                                     </View>
                                 </View>
+                                <View style={{ marginBottom: verticalScale(40) }}></View>
                             </ScrollView>
                         </Animated.View>
 
@@ -210,17 +217,18 @@ const styles = StyleSheet.create({
     modalContainer: {
         width: "100%",
         backgroundColor: "#FFFFFF",
-        padding: moderateScale(20),
+        // padding: ,
+        paddingBottom: 0,
         borderTopRightRadius: moderateScale(30),
         borderTopLeftRadius: moderateScale(30),
-        maxHeight: "70%"
+        maxHeight: "80%"
     },
     modalTitleText: {
         paddingVertical: moderateScale(3),
         paddingHorizontal: moderateScale(20),
         backgroundColor: "#E9F2FF",
         fontFamily: "Poppins_500Medium",
-        fontSize: moderateScale(9),
+        fontSize: moderateScale(12),
         color: "#1F86FF",
         borderRadius: moderateScale(20)
     },
@@ -243,19 +251,19 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        paddingVertical: verticalScale(7),
+        paddingVertical: verticalScale(12),
         paddingHorizontal: moderateScale(30),
         borderRadius: moderateScale(20)
     },
     modalButtonIcon: {
-        height: moderateScale(15),
-        width: moderateScale(15),
+        height: moderateScale(17),
+        width: moderateScale(17),
         tintColor: "#1F86FF"
     },
     modalButtonLabel: {
         color: "#1F86FF",
         fontFamily: "Inter_500Medium",
-        fontSize: moderateScale(10),
+        fontSize: moderateScale(12),
         marginLeft: moderateScale(10)
     }
 })

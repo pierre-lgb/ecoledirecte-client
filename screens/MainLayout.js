@@ -5,19 +5,19 @@ import { View, StatusBar } from 'react-native'
 
 import Header from '../components/Header'
 
-export default function MainLayout({ children, drawerAnimationStyle, navigation, route }) {
-    const drawerOpened = useIsDrawerOpen()
+export default function MainLayout({ children, navigation, route }) {
+    // const drawerOpened = useIsDrawerOpen()
     return (
-        <Animated.View
-            style={[drawerAnimationStyle, {
+        <View
+            style={{
                 flex: 1,
                 backgroundColor: '#FFFFFF',
                 overflow: "hidden"
-            }]}
+            }}
         >
             <StatusBar
                 backgroundColor="transparent"
-                barStyle={drawerOpened ? "light-content" : "dark-content"}
+                barStyle={"dark-content"}
                 showHideTransition={true}
                 translucent={true}
             />
@@ -29,8 +29,7 @@ export default function MainLayout({ children, drawerAnimationStyle, navigation,
             <View style={{ flex: 1 }}>
                 {children}
             </View>
-
-        </Animated.View>
+        </View>
     )
 }
 

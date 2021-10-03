@@ -1,5 +1,5 @@
 export default {
-    home: require('../assets/icons/form.png'),
+    home: require('../assets/icons/user.png'),
     calendar: require('../assets/icons/calendar.png'),
     agenda: require('../assets/icons/agenda.png'),
     note: require('../assets/icons/notes.png'),
@@ -34,5 +34,6 @@ export default {
     uncheckedRadio: require('../assets/icons/radio-unchecked.png'),
     notification: require('../assets/icons/bell.png'),
     notificationActive: require('../assets/icons/bell-active.png'),
-    phone: require('../assets/icons/mobile.png')
+    phone: require('../assets/icons/mobile.png'),
+    report: require('../assets/icons/report.png')
 }

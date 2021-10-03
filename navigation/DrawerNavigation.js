@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StatusBar } from 'react-native';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
 import {
     createDrawerNavigator,
     DrawerContentScrollView
 } from '@react-navigation/drawer';
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from '../store/auth/authActions';
-import Animated from 'react-native-reanimated';
 
 import {
     icons,
@@ -26,9 +25,7 @@ import { verticalScale, moderateScale } from 'react-native-size-matters';
 const ProfileInfo = ({ nom, prenom, classe, imageURI }) => {
     return (
         <View style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginBottom: verticalScale(10)
+            marginVertical: verticalScale(10)
         }}>
             <Image
                 source={{
@@ -40,21 +37,22 @@ const ProfileInfo = ({ nom, prenom, classe, imageURI }) => {
                 }}
                 resizeMode="cover"
                 style={{
-                    height: verticalScale(50),
-                    width: verticalScale(50),
+                    height: verticalScale(60),
+                    width: verticalScale(60),
                     borderRadius: moderateScale(50),
                     borderWidth: moderateScale(2),
                     borderColor: '#54A0FF'
                 }}
             />
-            <View style={{ marginLeft: moderateScale(15), flex: 1 }}>
+            <View style={{ flex: 1, marginTop: verticalScale(15) }}>
                 <Text
                     style={{
-                        color: '#FFFFFF',
-                        fontFamily: 'Poppins_500Medium',
-                        fontSize: verticalScale(11.5)
+                        color: '#495564',
+                        fontFamily: 'Poppins_600SemiBold',
+                        fontSize: verticalScale(14),
+                        lineHeight: verticalScale(20),
+                        textTransform: "capitalize"
                     }}
-                    textBreakStrategy="simple"
                     numberOfLines={2}
                     lineBreakMode="tail"
                 >{prenom || ""} {nom || ""}</Text>
@@ -63,7 +61,8 @@ const ProfileInfo = ({ nom, prenom, classe, imageURI }) => {
                     style={{
                         color: '#B7B7B7',
                         fontFamily: 'Poppins_400Regular',
-                        fontSize: verticalScale(10)
+                        fontSize: verticalScale(10),
+                        lineHeight: verticalScale(20)
                     }}
                 >{classe || ""}</Text>
             </View>
@@ -76,8 +75,8 @@ const DrawerDivider = () => {
         <View
             style={{
                 height: verticalScale(1.5),
-                marginVertical: verticalScale(10),
-                backgroundColor: "#3B4656"
+                marginVertical: verticalScale(20),
+                backgroundColor: "#F9F9F9"
             }}
         />
     )
@@ -86,31 +85,32 @@ const DrawerDivider = () => {
 const DrawerItem = ({ icon, screenName, isFocused, navigation }) => {
     return (
         <TouchableOpacity
+            onPress={() => navigation.navigate(screenName)}
             style={{
                 flexDirection: 'row',
                 height: verticalScale(45),
                 marginVertical: verticalScale(5),
                 alignItems: 'center',
                 paddingLeft: moderateScale(20),
-                borderRadius: moderateScale(8),
-                backgroundColor: isFocused ? '#FFFFFF' : null
+                borderRadius: moderateScale(15),
+                backgroundColor: isFocused ? "#E9F2FF" : "transparent"
             }}
-            onPress={() => navigation.navigate(screenName)}
         >
+
             <Image
                 source={icon}
                 style={{
-                    width: verticalScale(22),
-                    height: verticalScale(22),
-                    tintColor: isFocused ? '#2C3748' : '#FFFFFF'
+                    width: verticalScale(18),
+                    height: verticalScale(18),
+                    tintColor: isFocused ? '#1F86FF' : '#7E8791'
                 }}
             />
 
             <Text
                 style={{
-                    marginLeft: moderateScale(14),
-                    color: isFocused ? '#2C3748' : '#FFFFFF',
-                    fontFamily: 'Poppins_400Regular',
+                    marginLeft: moderateScale(20),
+                    color: isFocused ? '#1F86FF' : '#7E8791',
+                    fontFamily: isFocused ? 'Inter_500Medium' : 'Inter_400Regular',
                     fontSize: verticalScale(12)
                 }}
             >
@@ -120,7 +120,7 @@ const DrawerItem = ({ icon, screenName, isFocused, navigation }) => {
     )
 }
 
-const LogoutButton = ({ navigation }) => {
+const LogoutButton = () => {
     const dispatch = useDispatch()
 
     return (
@@ -128,7 +128,6 @@ const LogoutButton = ({ navigation }) => {
             style={{
                 flexDirection: 'row',
                 height: verticalScale(45),
-                marginVertical: verticalScale(40),
                 alignItems: 'center',
                 paddingLeft: moderateScale(20)
             }}
@@ -149,7 +148,7 @@ const LogoutButton = ({ navigation }) => {
             <Text style={{
                 marginLeft: moderateScale(14),
                 color: '#FC7D7D',
-                fontFamily: 'Poppins_400Regular',
+                fontFamily: 'Inter_400Regular',
                 fontSize: verticalScale(12)
             }}
             >
@@ -167,7 +166,11 @@ const DrawerContent = ({ state, navigation }) => {
         <DrawerContentScrollView
             scrollEnabled
             showsVerticalScrollIndicator={false}
-            style={{ flex: 1 }}
+            style={{
+                flex: 1,
+                borderRightColor: "#F9F9F9",
+                borderRightWidth: 2
+            }}
         >
             <View
                 style={{
@@ -204,12 +207,12 @@ const DrawerContent = ({ state, navigation }) => {
                     isFocused={state.routeNames[state.index] === screens.agenda}
                     navigation={navigation}
                 />
-                <DrawerItem
+                {/* <DrawerItem
                     icon={icons.note}
                     screenName={screens.notes}
                     isFocused={state.routeNames[state.index] === screens.notes}
                     navigation={navigation}
-                />
+                /> */}
                 <DrawerItem
                     icon={icons.mail}
                     screenName={screens.messages}
@@ -225,13 +228,6 @@ const DrawerContent = ({ state, navigation }) => {
 
                 <DrawerDivider />
 
-                <DrawerItem
-                    icon={icons.settings}
-                    screenName={screens.settings}
-                    isFocused={state.routeNames[state.index] === screens.settings}
-                    navigation={navigation}
-                />
-
                 <LogoutButton navigation={navigation} />
             </View>
         </DrawerContentScrollView>
@@ -241,85 +237,45 @@ const DrawerContent = ({ state, navigation }) => {
 const Drawer = createDrawerNavigator()
 
 export default () => {
-    const [progress, setProgress] = useState(new Animated.Value(0))
-
-    const scale = Animated.interpolateNode(progress, {
-        inputRange: [0, 1],
-        outputRange: [1, 0.7]
-    })
-
-    const borderRadius = Animated.interpolateNode(progress, {
-        inputRange: [0, 1],
-        outputRange: [0, moderateScale(20)]
-    })
-
-    const translateX = Animated.interpolateNode(progress, {
-        inputRange: [0, 1],
-        outputRange: [0, -60]
-    })
-
-    const animatedStyle = { borderRadius, transform: [{ scale, translateX }] }
-
     return (
         <View
             style={{
                 flex: 1,
-                // backgroundColor: '#FFFFFF'
                 backgroundColor: '#2C3748'
             }}
         >
             <Drawer.Navigator
-                drawerType="slide"
-                overlayColor="transparent"
-                drawerStyle={{
-                    flex: 1,
-                    width: moderateScale(280),
-                    paddingRight: 10,
-                    backgroundColor: 'transparent'
-                }}
                 sceneContainerStyle={{
                     backgroundColor: 'transparent'
                 }}
-                initialRouteName='Home'
-                drawerContent={({ state, navigation, progress }) => {
-                    setTimeout(() => {
-                        setProgress(progress)
-                    }, 0)
-
-                    return (
-                        <DrawerContent navigation={navigation} state={state} />
-                    )
+                screenOptions={{
+                    headerShown: false,
+                    drawerType: "slide",
+                    overlayColor: "transparent",
+                    drawerStyle: {
+                        width: "85%"
+                    }
                 }}
-            // screenOptions={{
-            //     headerStyle: {
-            //         backgroundColor: '#f4511e',
-            //     },
-            //     headerTintColor: '#fff',
-            //     headerTitleStyle: {
-            //         fontWeight: 'bold',
-            //     },
-            // }}
+                initialRouteName='Home'
+                drawerContent={(props) => <DrawerContent {...props} />}
             >
                 <Drawer.Screen name={screens.home}>{props => (
-                    <Home {...props} drawerAnimationStyle={animatedStyle} />
+                    <Home {...props} />
                 )}</Drawer.Screen>
                 <Drawer.Screen name={screens.timetable}>{props => (
-                    <Timetable {...props} drawerAnimationStyle={animatedStyle} />
+                    <Timetable {...props} />
                 )}</Drawer.Screen>
                 <Drawer.Screen name={screens.agenda}>{props => (
-                    <Agenda {...props} drawerAnimationStyle={animatedStyle} />
+                    <Agenda {...props} />
                 )}</Drawer.Screen>
-                <Drawer.Screen name={screens.notes}>{props => (
-                    <Notes {...props} drawerAnimationStyle={animatedStyle} />
-                )}</Drawer.Screen>
+                {/* <Drawer.Screen name={screens.notes}>{props => (
+                    <Notes {...props} />
+                )}</Drawer.Screen> */}
                 <Drawer.Screen name={screens.messages}>{props => (
-                    <Messages {...props} drawerAnimationStyle={animatedStyle} />
+                    <Messages {...props} />
                 )}</Drawer.Screen>
                 <Drawer.Screen name={screens.documents}>{props => (
-                    <Documents {...props} drawerAnimationStyle={animatedStyle} />
-                )}</Drawer.Screen>
-                <Drawer.Screen name={screens.settings}>{props => (
-                    <Settings {...props} drawerAnimationStyle={animatedStyle} />
+                    <Documents {...props} />
                 )}</Drawer.Screen>
             </Drawer.Navigator>
         </View>

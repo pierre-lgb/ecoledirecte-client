@@ -1,11 +1,16 @@
 import useFetchED from "./useFetchED";
 
-const useDocuments = () => {
-    const { data, error, loading, refetch } = useFetchED('https://api.ecoledirecte.com/v3/elevesDocuments.awp', {
+const useDatesWithHomework = (date) => {
+    const { data, error, loading, refetch } = useFetchED(`https://api.ecoledirecte.com/v3/Eleves/5241/cahierdetexte/${date.format("YYYY-MM-DD")}.awp`, {
         "verbe": "get"
     })
 
-    return {}
+    return {
+        homework: data?.data || [],
+        error,
+        loading,
+        refetchHomework: refetch
+    }
 }
 
-export default useDocuments
+export default useDatesWithHomework

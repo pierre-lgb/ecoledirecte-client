@@ -38,7 +38,6 @@ export default function Login({ route }) {
             <Formik
                 initialValues={{ username: "", password: "" }}
                 onSubmit={({ username, password }) => {
-                    console.log("SUBMIT")
                     dispatch(clearErrorMessage())
                     setSubmitting(true)
 
@@ -118,7 +117,12 @@ export default function Login({ route }) {
                                 onPress={handleSubmit}
                             >
                                 {submitting ? (
-                                    <Progress.CircleSnail color="#1F86FF" size={moderateScale(20)} indeterminate={true} />
+                                    <Progress.CircleSnail
+                                        color="#1F86FF"
+                                        size={moderateScale(20)}
+                                        indeterminate={true}
+                                        thickness={moderateScale(2.5)}
+                                    />
                                 ) : (
                                     <Text style={{
                                         fontFamily: "Poppins_400Regular",

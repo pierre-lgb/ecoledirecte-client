@@ -20,7 +20,11 @@ import dayjs from 'dayjs';
 import { icons } from "../../constants";
 const SEARCHBAR_HEADER_HEIGHT = verticalScale(75)
 
-const SearchBarHeader = ({ flatListScrollY, setBoxModalVisible, query, setQuery }) => {
+const SearchBarHeader = ({
+    flatListScrollY,
+    setBoxModalVisible,
+    setQuery
+}) => {
     const translateY = Animated
         .diffClamp(flatListScrollY.current, 0, SEARCHBAR_HEADER_HEIGHT)
         .interpolate({
@@ -114,9 +118,19 @@ const SearchBarHeader = ({ flatListScrollY, setBoxModalVisible, query, setQuery 
     )
 }
 
-const BoxModal = ({ visible, setVisible, classeurs, idClasseur, setIdClasseur, box, setBox, yearMessages, setYearMessages }) => {
-    const { accounts } = useSelector(state => state.auth)
-    const currentYear = accounts[0].anneeScolaireCourante
+const BoxModal = ({
+    visible,
+    setVisible,
+    classeurs,
+    idClasseur,
+    setIdClasseur,
+    box,
+    setBox,
+    yearMessages,
+    setYearMessages,
+    account
+}) => {
+    const currentYear = account.anneeScolaireCourante || ""
     const previousYear = currentYear.split("-").map(part => +part - 1).join("-")
 
     return (
@@ -205,7 +219,11 @@ const BoxModal = ({ visible, setVisible, classeurs, idClasseur, setIdClasseur, b
     )
 }
 
-const MessageItem = memo(({ message, yearMessages, navigation }) => {
+const MessageItem = memo(({
+    message,
+    yearMessages,
+    navigation
+}) => {
     const [disabled, setDisabled] = useState(false)
     const [read, setRead] = useState(message.read)
 
@@ -376,6 +394,13 @@ export default function MessageList(props) {
         refetchMessages
     } = useMessages(box, idClasseur, query, yearMessages)
 
+    const { accounts } = useSelector(state => state.auth)
+    const account = accounts[0]
+
+    if (!account) {
+        return <MainLayout {...props}></MainLayout>
+    }
+
     return (
         <MainLayout {...props}>
             <BoxModal
@@ -388,6 +413,7 @@ export default function MessageList(props) {
                 setBox={setBox}
                 yearMessages={yearMessages}
                 setYearMessages={setYearMessages}
+                account={account}
             />
             <Animated.FlatList
                 contentInset={{ top: SEARCHBAR_HEADER_HEIGHT }}
@@ -422,7 +448,6 @@ export default function MessageList(props) {
             <SearchBarHeader
                 flatListScrollY={flatListScrollY}
                 setBoxModalVisible={setBoxModalVisible}
-                query={query}
                 setQuery={setQuery}
             />
         </MainLayout >

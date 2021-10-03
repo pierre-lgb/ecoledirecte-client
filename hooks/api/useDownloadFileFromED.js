@@ -28,13 +28,12 @@ const useDownloadFileFromED = (token) => {
             android: DownloadDir // Only works on Android, not on IOS
         });
 
+        // Convert body to x-www-form-urlencoded
         const params = new URLSearchParams({
             token: token,
             fichierId: file.id,
             ...additionalParams
         }).toString();
-        console.log(params);
-
 
         setDownloadProgress(0)
         RNFetchBlob
