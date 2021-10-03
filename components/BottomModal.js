@@ -78,48 +78,48 @@ export const BottomModalChoice = ({ label, selected, onPress, closeModal, style 
     )
 }
 
-export const BottomModalRadio = ({ label, selected, onPress, style, closeModal }) => {
-    return (
-        <TouchableOpacity
-            onPress={() => {
-                closeModal()
-                onPress()
-            }}
-            style={[styles.modalItem, style]}
-        >
-            <Image
-                source={selected ? icons.checkedRadio : icons.uncheckedRadio}
-                style={[styles.modalItemIcon, {
-                    tintColor: selected ? "#1F86FF" : "#BEBFBF"
-                }]}
-            />
-            <Text
-                style={[styles.modalItemLabel, {
-                    color: selected ? "#1F86FF" : "#BEBFBF"
-                }]}
-            >
-                {label}
-            </Text>
-        </TouchableOpacity>
-    )
-}
+// export const BottomModalRadio = ({ label, selected, onPress, style, closeModal }) => {
+//     return (
+//         <TouchableOpacity
+//             onPress={() => {
+//                 closeModal()
+//                 onPress()
+//             }}
+//             style={[styles.modalItem, style]}
+//         >
+//             <Image
+//                 source={selected ? icons.checkedRadio : icons.uncheckedRadio}
+//                 style={[styles.modalItemIcon, {
+//                     tintColor: selected ? "#1F86FF" : "#BEBFBF"
+//                 }]}
+//             />
+//             <Text
+//                 style={[styles.modalItemLabel, {
+//                     color: selected ? "#1F86FF" : "#BEBFBF"
+//                 }]}
+//             >
+//                 {label}
+//             </Text>
+//         </TouchableOpacity>
+//     )
+// }
 
-export const BottomModalButton = ({ icon, label, onPress, style }) => {
-    return (
-        <TouchableOpacity
-            onPress={onPress}
-            style={[styles.modalButton, style]}
-        >
-            <Image
-                source={icon}
-                style={styles.modalButtonIcon}
-            />
-            <Text style={styles.modalButtonLabel}>
-                {label}
-            </Text>
-        </TouchableOpacity>
-    )
-}
+// export const BottomModalButton = ({ icon, label, onPress, style }) => {
+//     return (
+//         <TouchableOpacity
+//             onPress={onPress}
+//             style={[styles.modalButton, style]}
+//         >
+//             <Image
+//                 source={icon}
+//                 style={styles.modalButtonIcon}
+//             />
+//             <Text style={styles.modalButtonLabel}>
+//                 {label}
+//             </Text>
+//         </TouchableOpacity>
+//     )
+// }
 
 export const BottomModal = ({ visible, setVisible, title, children }) => {
     const slideAnimation = useRef(new Animated.Value(moderateScale(100))).current

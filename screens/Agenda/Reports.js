@@ -1,6 +1,8 @@
 import React, { useRef, useState } from 'react'
 import {
-    View, Text, Animated,
+    View,
+    Text,
+    Animated,
     RefreshControl,
     Dimensions
 } from 'react-native'
@@ -9,7 +11,10 @@ import Calendar from '../../components/Calendar'
 import FileItem from '../../components/FileItem'
 
 import { base64UTF8Decode } from '../../utils';
-import { verticalScale, moderateScale } from "react-native-size-matters"
+import {
+    verticalScale,
+    moderateScale
+} from "react-native-size-matters"
 import dayjs from 'dayjs';
 
 import { useSelector } from 'react-redux'

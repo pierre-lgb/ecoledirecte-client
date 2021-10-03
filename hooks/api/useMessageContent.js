@@ -12,7 +12,7 @@ const useMessageContent = (message, yearMessages) => {
     return {
         messageContent: data ? base64UTF8Decode(
             data.data.content.replace(/\n/gm, "")
-        ) : "",
+        ).replace(/<[^> ]*:[^>]*>/gm, "") : "",
         error,
         loading
     }

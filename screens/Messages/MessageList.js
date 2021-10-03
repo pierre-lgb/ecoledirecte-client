@@ -1,23 +1,36 @@
-import React, { useState, useEffect, useRef, memo } from "react";
+import React, {
+    useState,
+    useRef,
+    memo
+} from "react";
 import {
-    Text, View, Animated,
-    Image, TouchableOpacity,
-    TextInput, RefreshControl
+    Text,
+    View,
+    Animated,
+    Image,
+    TouchableOpacity,
+    TextInput,
+    RefreshControl
 } from "react-native";
 import {
-    BottomModal, BottomModalOption,
-    BottomModalDivider, BottomModalRadio,
-    BottomModalButton,
+    BottomModal,
+    BottomModalOption,
+    BottomModalDivider,
     BottomModalChoice
 } from "../../components/BottomModal"
 import MainLayout from "../MainLayout";
 import useMessages from '../../hooks/api/useMessages';
 import { useSelector } from "react-redux";
 
-import { verticalScale, moderateScale, scale } from "react-native-size-matters";
+import {
+    verticalScale,
+    moderateScale,
+    scale
+} from "react-native-size-matters";
 import dayjs from 'dayjs';
 
 import { icons } from "../../constants";
+
 const SEARCHBAR_HEADER_HEIGHT = verticalScale(75)
 
 const SearchBarHeader = ({
@@ -208,13 +221,13 @@ const BoxModal = ({
                 />
             ))}
 
-            <BottomModalButton
+            {/* <BottomModalButton
                 icon={icons.addFolder}
                 label="Nouveau dossier"
                 style={{
                     marginTop: verticalScale(10)
                 }}
-            />
+            /> */}
         </BottomModal>
     )
 }

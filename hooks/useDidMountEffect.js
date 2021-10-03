@@ -1,4 +1,7 @@
-import { useEffect, useRef } from 'react';
+import {
+    useEffect,
+    useRef
+} from 'react';
 
 const useDidMountEffect = (func, dependencies) => {
     const didMount = useRef(false);

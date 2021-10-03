@@ -13,7 +13,10 @@ import MainLayout from '../MainLayout'
 
 import { useSelector } from 'react-redux'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { moderateScale, verticalScale } from 'react-native-size-matters';
+import {
+    moderateScale,
+    verticalScale
+} from 'react-native-size-matters';
 import { icons } from '../../constants';
 
 const TabBarIcon = ({ icon, isFocused }) => {

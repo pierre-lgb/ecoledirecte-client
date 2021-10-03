@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet } from 'react-native';
+import React from 'react';
+import { SafeAreaView } from 'react-native';
 
 import { Provider } from 'react-redux'
-import { store, persistor } from './store';
+import {
+  store,
+  persistor
+} from './store';
 import { PersistGate } from 'redux-persist/integration/react';
 
 import {
@@ -25,8 +28,7 @@ import 'dayjs/locale/fr';
 dayjs.locale('fr')
 
 import RootNavigation from './navigation/RootNavigation';
-import SplashScreen from './screens/auth/SplashScreen'
-
+import SplashScreen from './screens/SplashScreen'
 
 
 export default function App() {
@@ -41,11 +43,6 @@ export default function App() {
     Inter_400Regular
   })
 
-
-  useEffect(() => {
-    console.log("------------------------")
-  }, [])
-
   if (!fontsLoaded) {
     return <SplashScreen />
   }
@@ -53,17 +50,12 @@ export default function App() {
   return (
     <Provider store={store}>
       <PersistGate loading={<SplashScreen />} persistor={persistor}>
-        <RootNavigation />
+        <SafeAreaView style={{
+          flex: 1
+        }}>
+          <RootNavigation />
+        </SafeAreaView>
       </PersistGate>
     </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

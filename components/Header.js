@@ -1,11 +1,21 @@
 import React from 'react'
-import { StyleSheet, View, Image, TouchableOpacity, Text } from 'react-native'
+import {
+    StyleSheet,
+    View,
+    Text
+} from 'react-native'
 import { icons } from '../constants'
-import { moderateScale, verticalScale } from 'react-native-size-matters'
-
+import {
+    moderateScale,
+    verticalScale
+} from 'react-native-size-matters'
 import IconButton from "./IconButton"
 
+import { logout } from '../store/auth/authActions'
+import { useDispatch } from 'react-redux'
+
 export default function Header({ openDrawer, routeName }) {
+    const dispatch = useDispatch()
     return (
         <View style={{
             paddingTop: verticalScale(50),
@@ -34,7 +44,8 @@ export default function Header({ openDrawer, routeName }) {
             }}>{routeName}</Text>
 
             <IconButton
-                icon={icons.notificationActive}
+                icon={icons.logout}
+                onPress={() => dispatch(logout())}
             />
         </View >
     )

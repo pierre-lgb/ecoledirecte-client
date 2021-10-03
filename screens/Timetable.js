@@ -4,17 +4,18 @@ import {
     View,
     RefreshControl
 } from 'react-native'
+import TimeTable from '../components/TimeTable'
+import Calendar from '../components/Calendar'
+import MainLayout from './MainLayout'
+
 import {
     verticalScale,
     moderateScale
 } from 'react-native-size-matters'
 import dayjs from 'dayjs'
 
+import { useSelector } from 'react-redux'
 import useTimetableEvents from '../hooks/api/useTimetableEvents'
-
-import TimeTable from '../components/TimeTable'
-import Calendar from '../components/Calendar'
-import MainLayout from './MainLayout'
 
 
 
@@ -31,6 +32,13 @@ export default function Timetable(props) {
     useDidMountEffect(() => {
         refetchTimelineEvents()
     }, [currentDate])
+
+    const { accounts } = useSelector(state => state.auth)
+    const account = accounts[0]
+
+    if (!account) {
+        return <MainLayout {...props}></MainLayout>
+    }
 
     return (
         <MainLayout {...props} >

@@ -1,6 +1,8 @@
 import React from "react"
 import {
-    View, Text, ScrollView
+    View,
+    Text,
+    ScrollView
 } from 'react-native'
 import RenderHtml from 'react-native-render-html'
 import FileItem from "../../components/FileItem"
@@ -8,17 +10,22 @@ import StackHeader from '../../components/StackHeader'
 import DownloadProgressBar from "../../components/DownloadProgressBar"
 import * as Progress from 'react-native-progress'
 
-import { useWindowDimensions } from 'react-native'
-import { moderateScale, verticalScale } from 'react-native-size-matters'
-import { useSelector } from 'react-redux'
+import {
+    moderateScale,
+    verticalScale
+} from 'react-native-size-matters'
 
+import { useSelector } from 'react-redux'
+import { useWindowDimensions } from 'react-native'
 import useMessageContent from '../../hooks/api/useMessageContent'
 import useDownloadFileFromED from '../../hooks/api/useDownloadFileFromED'
 
 import { renderHtmlConfig } from "../../constants"
 
 
-const MessageHeader = ({ message }) => {
+const MessageHeader = ({
+    message
+}) => {
     return (
         <View style={{
             flexDirection: "row",
@@ -93,7 +100,10 @@ const MessageHeader = ({ message }) => {
     )
 }
 
-export default function Message({ route, navigation }) {
+export default function Message({
+    route,
+    navigation
+}) {
     const { message, yearMessages } = route.params
     const { width } = useWindowDimensions()
 
@@ -181,13 +191,12 @@ export default function Message({ route, navigation }) {
                 </View>
             </ScrollView>
             <DownloadProgressBar downloadProgress={downloadProgress} />
-            <View style={{
+            {/* <View style={{
                 height: verticalScale(75),
                 borderTopColor: "#F9F9F9",
                 borderTopWidth: moderateScale(2)
             }}>
-
-            </View>
+            </View> */}
         </View>
     )
 }

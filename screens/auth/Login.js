@@ -1,15 +1,24 @@
 import React, { useState } from 'react'
-import { View, ScrollView, Text, TouchableOpacity } from 'react-native'
-import { useDispatch, useSelector } from "react-redux";
-import { clearErrorMessage } from '../../store/auth/authActions';
-import { icons } from '../../constants'
-import { scale, moderateScale, verticalScale } from 'react-native-size-matters'
-import * as Progress from 'react-native-progress';
-
+import {
+    View,
+    ScrollView,
+    Text,
+    TouchableOpacity
+} from 'react-native'
 import FormItem from '../../components/FormItem';
 import { Formik } from 'formik';
+import * as Progress from 'react-native-progress';
 
+import { clearErrorMessage } from '../../store/auth/authActions';
 import { login } from '../../store/auth/authActions';
+import { scale, moderateScale, verticalScale } from 'react-native-size-matters'
+
+import {
+    useDispatch,
+    useSelector
+} from "react-redux";
+
+import { icons } from '../../constants'
 
 
 export default function Login({ route }) {

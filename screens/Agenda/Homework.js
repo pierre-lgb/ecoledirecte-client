@@ -1,6 +1,8 @@
 import dayjs from 'dayjs';
-import React, { useRef, useState } from 'react'
-import * as Progress from 'react-native-progress'
+import React, {
+    useRef,
+    useState
+} from 'react'
 import {
     View,
     Text,
@@ -13,7 +15,10 @@ import Calendar from "../../components/Calendar"
 import RenderHtml from 'react-native-render-html'
 import FileItem from '../../components/FileItem'
 
-import { verticalScale, moderateScale } from "react-native-size-matters"
+import {
+    verticalScale,
+    moderateScale
+} from "react-native-size-matters"
 import base64UTF8Decode from "../../utils/base64UTF8Decode"
 
 import { useSelector } from 'react-redux';
@@ -21,7 +26,10 @@ import useDatesWithHomework from '../../hooks/api/useDatesWithHomework'
 import useHomework from '../../hooks/api/useHomework'
 import useDownloadFileFromED from '../../hooks/api/useDownloadFileFromED'
 
-import { icons, renderHtmlConfig } from "../../constants"
+import {
+    icons,
+    renderHtmlConfig
+} from "../../constants"
 
 const DATEPICKER_HEADER_HEIGHT = verticalScale(90)
 
@@ -60,14 +68,7 @@ const DatePickerHeader = ({
                 justifyContent: "center",
                 alignItems: "center"
             }}>
-                {loading ? (
-                    <Progress.CircleSnail
-                        color="#1F86FF"
-                        size={moderateScale(30)}
-                        indeterminate={true}
-                        thickness={moderateScale(3)}
-                    />
-                ) : error ? (
+                {loading ? null : error ? (
                     <Text style={{
                         fontFamily: "Poppins_400Regular",
                         color: "#FC7D7D",

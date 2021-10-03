@@ -1,13 +1,22 @@
 import React from 'react'
-import { View, Text, SectionList, RefreshControl } from 'react-native'
-import { useSelector } from 'react-redux'
-import useDocuments from '../hooks/api/useDocuments'
-import useDownloadFileFromED from '../hooks/api/useDownloadFileFromED'
-
+import {
+    View,
+    Text,
+    SectionList,
+    RefreshControl
+} from 'react-native'
 import DownloadProgressBar from '../components/DownloadProgressBar'
 import MainLayout from './MainLayout'
 import FileItem from '../components/FileItem'
-import { moderateScale, verticalScale } from 'react-native-size-matters'
+
+import {
+    moderateScale,
+    verticalScale
+} from 'react-native-size-matters'
+
+import { useSelector } from 'react-redux'
+import useDocuments from '../hooks/api/useDocuments'
+import useDownloadFileFromED from '../hooks/api/useDownloadFileFromED'
 
 const renderSectionHeader = ({ section: { title, data } }) => {
     return (

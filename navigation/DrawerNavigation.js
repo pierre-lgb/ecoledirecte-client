@@ -1,26 +1,40 @@
-import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import React from 'react'
+import {
+    View,
+    Text,
+    Image,
+    TouchableOpacity
+} from 'react-native'
+
+import { logout } from '../store/auth/authActions'
 import {
     createDrawerNavigator,
     DrawerContentScrollView
-} from '@react-navigation/drawer';
-import { useDispatch, useSelector } from "react-redux";
-import { logout } from '../store/auth/authActions';
+} from '@react-navigation/drawer'
+import {
+    verticalScale,
+    moderateScale
+} from 'react-native-size-matters';
+
+import {
+    useDispatch,
+    useSelector
+} from "react-redux"
 
 import {
     icons,
     screens
-} from '../constants';
+} from '../constants'
 
-import Home from "../screens/Home";
-import Timetable from "../screens/Timetable";
-import Agenda from "../screens/Agenda";
-import Notes from "../screens/Notes";
-import Messages from "../screens/Messages";
-import Documents from "../screens/Documents";
-import Settings from "../screens/Settings";
+// Import screens
+import Home from "../screens/Home"
+import Timetable from "../screens/Timetable"
+import Agenda from "../screens/Agenda"
+import Messages from "../screens/Messages"
+import Documents from "../screens/Documents"
 
-import { verticalScale, moderateScale } from 'react-native-size-matters';
+
+
 
 const ProfileInfo = ({ nom, prenom, classe, imageURI }) => {
     return (
@@ -207,12 +221,6 @@ const DrawerContent = ({ state, navigation }) => {
                     isFocused={state.routeNames[state.index] === screens.agenda}
                     navigation={navigation}
                 />
-                {/* <DrawerItem
-                    icon={icons.note}
-                    screenName={screens.notes}
-                    isFocused={state.routeNames[state.index] === screens.notes}
-                    navigation={navigation}
-                /> */}
                 <DrawerItem
                     icon={icons.mail}
                     screenName={screens.messages}
@@ -268,9 +276,6 @@ export default () => {
                 <Drawer.Screen name={screens.agenda}>{props => (
                     <Agenda {...props} />
                 )}</Drawer.Screen>
-                {/* <Drawer.Screen name={screens.notes}>{props => (
-                    <Notes {...props} />
-                )}</Drawer.Screen> */}
                 <Drawer.Screen name={screens.messages}>{props => (
                     <Messages {...props} />
                 )}</Drawer.Screen>

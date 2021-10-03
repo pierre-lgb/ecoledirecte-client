@@ -1,12 +1,16 @@
 import React from 'react'
-import Animated from 'react-native-reanimated'
-import { useIsDrawerOpen } from '@react-navigation/drawer'
-import { View, StatusBar } from 'react-native'
-
+import {
+    View,
+    StatusBar
+} from 'react-native'
 import Header from '../components/Header'
 
-export default function MainLayout({ children, navigation, route }) {
-    // const drawerOpened = useIsDrawerOpen()
+export default function MainLayout({
+    children,
+    navigation,
+    route
+}) {
+
     return (
         <View
             style={{
@@ -32,22 +36,3 @@ export default function MainLayout({ children, navigation, route }) {
         </View>
     )
 }
-
-// import React from 'react'
-// import { StyleSheet, Text, View } from 'react-native'
-// import Animated from 'react-native-reanimated'
-
-// export default function MainLayout(props) {
-//     return (
-//         <Animated.View style={[styles.container, props.drawerAnimationStyle]}>
-//             {props.children}
-//         </Animated.View>
-//     )
-// }
-
-// const styles = StyleSheet.create({
-//     container: {
-//         flex: 1,
-//         backgroundColor: '#F1F2F8'
-//     }
-// })
