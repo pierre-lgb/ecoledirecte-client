@@ -1,7 +1,9 @@
 import useFetchED from "./useFetchED";
 
 const useTimetableEvents = (date) => {
-    const { data, error, loading, refetch } = useFetchED('https://api.ecoledirecte.com/v3/E/5241/emploidutemps.awp', {
+    const { data, error, loading, refetch } = useFetchED((userId) => {
+        return `https://api.ecoledirecte.com/v3/E/${userId}/emploidutemps.awp`
+    }, {
         "verbe": "get"
     }, {
         "dateDebut": date.format("YYYY-MM-DD"),

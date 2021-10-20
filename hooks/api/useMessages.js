@@ -2,7 +2,9 @@ import useDidMountEffect from '../useDidMountEffect';
 import useFetchED from "./useFetchED";
 
 const useMessages = (box, idClasseur, query, yearMessages) => {
-    const { data, error, loading, refetch } = useFetchED('https://api.ecoledirecte.com/v3/eleves/5241/messages.awp', {
+    const { data, error, loading, refetch } = useFetchED((userId) => {
+        return `https://api.ecoledirecte.com/v3/eleves/${userId}/messages.awp`
+    }, {
         "verbe": "getall",
         "typeRecuperation": box,
         "orderBy": "date",

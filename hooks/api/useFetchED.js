@@ -11,24 +11,28 @@ import { responseCodes } from "../../constants";
 
 import axios from "axios";
 
-export default (url, params = {}, body = {}) => {
+export default (getUrl, params = {}, body = {}) => {
     const [data, setData] = useState();
     const [error, setError] = useState();
     const [loading, setLoading] = useState(false);
     const [refetchIndex, setRefetchIndex] = useState(0)
 
     const dispatch = useDispatch()
-    const { token } = useSelector(state => state.auth)
+    const { token, accounts } = useSelector(state => state.auth)
+    const account = accounts[0]
 
     const refetch = () => {
         setLoading(true) // Prevent refresh indicator glitch
         setRefetchIndex(prevRefetchIndex => prevRefetchIndex + 1)
     }
 
+    const url = getUrl(account?.id) || ""
+
     useEffect(() => {
         console.log("[INFO] Fetch EcoleDirecte API :", url)
         setLoading(true);
         setError("")
+
 
         axios.post(url, `data=${JSON.stringify({
             ...body,

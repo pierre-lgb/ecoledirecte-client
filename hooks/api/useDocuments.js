@@ -1,7 +1,7 @@
 import useFetchED from "./useFetchED";
 
 const useDocuments = (account) => {
-    const { data, error, loading, refetch } = useFetchED('https://api.ecoledirecte.com/v3/elevesDocuments.awp', {
+    const { data, error, loading, refetch } = useFetchED(() => 'https://api.ecoledirecte.com/v3/elevesDocuments.awp', {
         "verbe": "get"
     })
     const documents = data?.data

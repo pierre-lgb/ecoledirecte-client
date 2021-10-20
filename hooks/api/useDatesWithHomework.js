@@ -1,7 +1,9 @@
 import useFetchED from "./useFetchED";
 
 const useDatesWithHomework = () => {
-    const { data, error, loading } = useFetchED(`https://api.ecoledirecte.com/v3/Eleves/5241/cahierdetexte.awp`, {
+    const { data, error, loading } = useFetchED((userId) => {
+        return `https://api.ecoledirecte.com/v3/Eleves/${userId}/cahierdetexte.awp`
+    }, {
         "verbe": "get"
     })
 
