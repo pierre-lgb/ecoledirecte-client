@@ -33,7 +33,7 @@
     "formik": "^2.2.9",
     "react": "16.13.1",
     "react-dom": "16.13.1",
-    "react-native": "~0.63.4",
+    "react-native": "~0.64.1",
     "react-native-barcode-builder": "^2.0.0",
     "react-native-fs": "^2.18.0",
     "react-native-gesture-handler": "~1.10.2",
